@@ -22,7 +22,7 @@ from langchain.memory import ConversationBufferMemory
 
 # Load environment variables
 load_dotenv()
-api_key = os.getenv("DEEPSEEK_API_KEY")
+api_key = os.getenv("DEEPSEEK_API_KEY") #st.secrets
 print("API key loaded:", api_key)  # Debug line
 os.environ["DEEPSEEK_API_KEY"] = api_key
 
