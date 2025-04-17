@@ -1,0 +1,9 @@
+streamlit==1.31.1
+langchain>=0.1.0
+openai
+chromadb==0.4.15
+sentence-transformers
+pypdf
+requests
+torch
+python-dotenv
