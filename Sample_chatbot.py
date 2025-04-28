@@ -31,10 +31,13 @@ class LocalHuggingFaceEmbeddings:
         return self.model.encode(text, convert_to_tensor=False).tolist()
 
 # Load environment variables
-load_dotenv()
-api_key = os.getenv("DEEPSEEK_API_KEY") #st.secrets
+#load_dotenv()
+# Instead of dotenv:
+api_key = st.secrets("DEEPSEEK_API_KEY") #os.getenv
 print("API key loaded:", api_key)  # Debug line
-os.environ["DEEPSEEK_API_KEY"] = api_key
+#os.environ["DEEPSEEK_API_KEY"] = api_key
+if api_key is None:
+    raise ValueError("API key not found!")
 
 
 
