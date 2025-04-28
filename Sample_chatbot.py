@@ -27,10 +27,10 @@ class LocalHuggingFaceEmbeddings(Embeddings):
         self.model = SentenceTransformer(model_name)
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return self.model.encode(texts, convert_to_numpy=False).tolist()
+        return self.model.encode(texts, convert_to_numpy=False)
 
     def embed_query(self, text: str) -> List[float]:
-        return self.model.encode(text, convert_to_numpy=False).tolist()
+        return self.model.encode(text, convert_to_numpy=False)
 
 
 # Load environment variables
