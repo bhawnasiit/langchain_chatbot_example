@@ -9,4 +9,4 @@ requests
 torch
 langchain-community
 langchain-core
-langchain-huggingface
+
