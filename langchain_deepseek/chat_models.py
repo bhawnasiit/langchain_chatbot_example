@@ -30,7 +30,14 @@ class ChatDeepSeek(SimpleChatModel):
 
         result = response.json()
         return result["choices"][0]["message"]["content"]
-
+    
+    def _convert_role(self, role: str) -> str:
+        if role == "human":
+            return "user"
+        elif role == "ai":
+            return "assistant"
+        else:
+            return role
     @property
     def _llm_type(self) -> str:
         return "deepseek-chat"
