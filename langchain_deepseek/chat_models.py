@@ -1,30 +1,29 @@
-from langchain.chat_models.base import SimpleChatModel
-from langchain.schema import AIMessage, HumanMessage
+from typing import Any, List
+from pydantic import Field
+from langchain_core.language_models.chat_models import SimpleChatModel
+from langchain_core.messages import HumanMessage, AIMessage
 import requests
 import os
 
 class ChatDeepSeek(SimpleChatModel):
-    def __init__(self, model="deepseek-chat", openai_api_key=None, openai_api_base=None, temperature=0.7, max_tokens=512):
-        self.model = model
-        self.api_key = openai_api_key or os.getenv("DEEPSEEK_API_KEY")
-        self.api_base = openai_api_base or "https://api.deepseek.com"
-        self.temperature = temperature
-        self.max_tokens = max_tokens
+    model: str = Field(default="deepseek-chat")
+    openai_api_key: str = Field(default_factory=lambda: os.getenv("DEEPSEEK_API_KEY"))
+    openai_api_base: str = Field(default="https://api.deepseek.com")
+    temperature: float = 0.7
+    max_tokens: int = 512
 
-    def _call(self, messages, **kwargs):
+    def _call(self, messages: List[Any], **kwargs: Any) -> str:
         payload = {
             "model": self.model,
             "messages": [{"role": msg.type, "content": msg.content} for msg in messages],
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
         }
-
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {self.openai_api_key}",
             "Content-Type": "application/json"
         }
-
-        response = requests.post(f"{self.api_base}/v1/chat/completions", json=payload, headers=headers)
+        response = requests.post(f"{self.openai_api_base}/v1/chat/completions", json=payload, headers=headers)
 
         if response.status_code != 200:
             raise Exception(f"DeepSeek API error: {response.text}")
@@ -32,10 +31,6 @@ class ChatDeepSeek(SimpleChatModel):
         result = response.json()
         return result["choices"][0]["message"]["content"]
 
-    def _identifying_params(self):
-        return {"model": self.model}
-    
     @property
     def _llm_type(self) -> str:
         return "deepseek-chat"
-
