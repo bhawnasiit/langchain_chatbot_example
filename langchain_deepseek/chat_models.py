@@ -32,12 +32,12 @@ class ChatDeepSeek(SimpleChatModel):
         return result["choices"][0]["message"]["content"]
     
     def _convert_role(self, role: str) -> str:
-        if role == "human":
+        if isinstance(message, HumanMessage):
             return "user"
-        elif role == "ai":
+        elif isinstance(message, AIMessage):
             return "assistant"
         else:
-            return role
+            return message.type
     @property
     def _llm_type(self) -> str:
         return "deepseek-chat"
