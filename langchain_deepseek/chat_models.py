@@ -1,7 +1,7 @@
 from typing import Any, List
 from pydantic import Field
 from langchain_core.language_models.chat_models import SimpleChatModel
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 import requests
 import os
 
@@ -15,7 +15,7 @@ class ChatDeepSeek(SimpleChatModel):
     def _call(self, messages: List[Any], **kwargs: Any) -> str:
         payload = {
             "model": self.model,
-            "messages": [{"role": msg.type, "content": msg.content} for msg in messages],
+            "messages": [{"role": self._convert_role(msg), "content": msg.content} for msg in messages],
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
         }
@@ -30,14 +30,17 @@ class ChatDeepSeek(SimpleChatModel):
 
         result = response.json()
         return result["choices"][0]["message"]["content"]
-    
-    def _convert_role(self, role: str) -> str:
+
+    def _convert_role(self, message: Any) -> str:
         if isinstance(message, HumanMessage):
             return "user"
         elif isinstance(message, AIMessage):
             return "assistant"
+        elif isinstance(message, SystemMessage):
+            return "system"
         else:
-            return message.type
+            return "user"  # Default fallback for any unknown message
+
     @property
     def _llm_type(self) -> str:
         return "deepseek-chat"
