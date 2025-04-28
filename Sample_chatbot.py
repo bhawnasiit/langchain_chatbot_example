@@ -18,6 +18,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.agents import initialize_agent, AgentType
 from langchain.tools import tool
 from langchain.memory import ConversationBufferMemory
+from typing import List
 from langchain_core.embeddings import Embeddings
 from sentence_transformers import SentenceTransformer
 
@@ -25,11 +26,11 @@ class LocalHuggingFaceEmbeddings(Embeddings):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         self.model = SentenceTransformer(model_name)
 
-    def embed_documents(self, texts):
-        return self.model.encode(texts, convert_to_tensor=False).tolist()
+    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        return self.model.encode(texts, convert_to_numpy=False).tolist()
 
-    def embed_query(self, text):
-        return self.model.encode(text, convert_to_tensor=False).tolist()
+    def embed_query(self, text: str) -> List[float]:
+        return self.model.encode(text, convert_to_numpy=False).tolist()
 
 # Load environment variables
 #load_dotenv()
@@ -87,7 +88,7 @@ if uploaded_file:
 
     vectorstore = FAISS.from_documents(
         documents=chunks,
-        embedding=embeddings.embed_query 
+        embedding=embeddings
     )
     retriever = vectorstore.as_retriever()
 
