@@ -34,3 +34,8 @@ class ChatDeepSeek(SimpleChatModel):
 
     def _identifying_params(self):
         return {"model": self.model}
+    
+    @property
+    def _llm_type(self) -> str:
+        return "deepseek-chat"
+
