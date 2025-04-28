@@ -10,7 +10,7 @@ from langchain.chains import LLMChain
 from langchain.chains import SimpleSequentialChain
 from langchain_core.runnables import RunnableLambda
 from langchain.schema import HumanMessage
-from langchain_huggingface import HuggingFaceEmbeddings
+#from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
@@ -18,7 +18,17 @@ from langchain_community.vectorstores import Chroma
 from langchain.agents import initialize_agent, AgentType
 from langchain.tools import tool
 from langchain.memory import ConversationBufferMemory
+from sentence_transformers import SentenceTransformer
 
+class LocalHuggingFaceEmbeddings:
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+        self.model = SentenceTransformer(model_name)
+
+    def embed_documents(self, texts):
+        return self.model.encode(texts, convert_to_tensor=False).tolist()
+
+    def embed_query(self, text):
+        return self.model.encode(text, convert_to_tensor=False).tolist()
 
 # Load environment variables
 load_dotenv()
@@ -65,7 +75,8 @@ if uploaded_file:
     chunks = splitter.split_documents(docs)
 
     # Embeddings
-    embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    #embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+    embeddings = LocalHuggingFaceEmbeddings()
 
     # Vector store
     vectorstore = Chroma.from_documents(
@@ -75,7 +86,7 @@ if uploaded_file:
     )
 
     retriever = vectorstore.as_retriever()
-    from langchain.chains import RetrievalQA
+    
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
