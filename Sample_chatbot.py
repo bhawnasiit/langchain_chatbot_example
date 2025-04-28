@@ -18,9 +18,10 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain.agents import initialize_agent, AgentType
 from langchain.tools import tool
 from langchain.memory import ConversationBufferMemory
+from langchain_core.embeddings import Embeddings
 from sentence_transformers import SentenceTransformer
 
-class LocalHuggingFaceEmbeddings:
+class LocalHuggingFaceEmbeddings(Embeddings):
     def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
         self.model = SentenceTransformer(model_name)
 
@@ -86,7 +87,7 @@ if uploaded_file:
 
     vectorstore = FAISS.from_documents(
         documents=chunks,
-        embedding=embeddings
+        embedding=embeddings.embed_query 
     )
     retriever = vectorstore.as_retriever()
 
