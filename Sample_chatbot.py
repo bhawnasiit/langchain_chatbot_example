@@ -32,6 +32,7 @@ class LocalHuggingFaceEmbeddings(Embeddings):
     def embed_query(self, text: str) -> List[float]:
         return self.model.encode(text, convert_to_numpy=False).tolist()
 
+
 # Load environment variables
 #load_dotenv()
 # Instead of dotenv:
@@ -88,8 +89,9 @@ if uploaded_file:
 
     vectorstore = FAISS.from_documents(
         documents=chunks,
-        embedding=embeddings
+        embedding=embeddings  # ✅ Object, no parentheses
     )
+
     retriever = vectorstore.as_retriever()
 
     qa_chain = RetrievalQA.from_chain_type(
