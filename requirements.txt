@@ -9,4 +9,6 @@ requests
 torch
 langchain-community
 langchain-core
+faiss-cpu
+
 

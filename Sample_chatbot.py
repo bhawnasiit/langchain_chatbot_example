@@ -14,7 +14,7 @@ from langchain.schema import HumanMessage
 from langchain.chains import RetrievalQA
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.vectorstores import Chroma
+#from langchain_community.vectorstores import Chroma
 from langchain.agents import initialize_agent, AgentType
 from langchain.tools import tool
 from langchain.memory import ConversationBufferMemory
@@ -82,14 +82,14 @@ if uploaded_file:
     embeddings = LocalHuggingFaceEmbeddings()
 
     # Vector store
-    vectorstore = Chroma.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        persist_directory="retrieval_db"
-    )
+    from langchain_community.vectorstores import FAISS
 
+    vectorstore = FAISS.from_documents(
+        documents=chunks,
+        embedding=embeddings
+    )
     retriever = vectorstore.as_retriever()
-    
+
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
         retriever=retriever,
